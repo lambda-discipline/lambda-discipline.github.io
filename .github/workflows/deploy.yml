@@ -51,7 +51,7 @@ jobs:
     if: needs.check.outputs.build == 'true'
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       - name: Clone the language repository
         run: git clone --depth 1 --branch "$UPSTREAM_BRANCH" "$UPSTREAM" .cache/lambda-discipline
@@ -65,7 +65,7 @@ jobs:
         with:
           workspaces: .cache/lambda-discipline
 
-      - uses: actions/setup-python@v5
+      - uses: actions/setup-python@v7
         with:
           python-version: "3.13"
           cache: pip
@@ -75,7 +75,7 @@ jobs:
       - name: Build the site
         run: python build.py --no-update
 
-      - uses: actions/upload-pages-artifact@v3
+      - uses: actions/upload-pages-artifact@v5
         with:
           path: _site
 
@@ -88,4 +88,4 @@ jobs:
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - id: deployment
-        uses: actions/deploy-pages@v4
+        uses: actions/deploy-pages@v5
