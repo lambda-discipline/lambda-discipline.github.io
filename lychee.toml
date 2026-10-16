@@ -1,0 +1,25 @@
+# Link checker settings for lychee 0.24 (https://lychee.cli.rs). Run it on a built site:
+#   lychee --root-dir "$PWD/_site" _site
+# Add --offline to check only the site's own pages.
+
+# Check that `#fragment` links point at an element that exists.
+include_fragments = "full"
+
+# Links to a directory resolve to its index.html, like on GitHub Pages.
+index_files = ["index.html"]
+
+# Remember results for a day so reruns don't hammer the same servers.
+cache = true
+max_cache_age = "1d"
+
+max_retries = 3
+timeout = 20
+
+# 429 means rate limited, not broken.
+accept = ["200..=299", "429"]
+
+exclude = [
+    # The site's own absolute URLs (canonical links, the sitemap) point at the
+    # deployed copy; the same pages are checked as local files instead.
+    '^https://lambda-discipline\.github\.io',
+]

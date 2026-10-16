@@ -1,0 +1,93 @@
+name: CI
+
+# Checks the build scripts, builds the site, and verifies every link in it.
+# The weekly run catches external links that have rotted since the last change.
+on:
+  push:
+    branches: [master]
+  pull_request:
+  workflow_dispatch:
+  schedule:
+    - cron: "41 4 * * 1"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  UPSTREAM: https://github.com/lambda-discipline/lambda-discipline
+  UPSTREAM_BRANCH: master
+
+jobs:
+  lint:
+    name: Format, lint and types
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+          cache: pip
+          cache-dependency-path: requirements*.txt
+      - run: pip install -r requirements-dev.txt
+      # black, ruff, mypy and the file hygiene hooks, as configured in
+      # .pre-commit-config.yaml.
+      - run: pre-commit run --all-files --show-diff-on-failure --color always
+
+  build:
+    name: Build and check links
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Clone the language repository
+        run: git clone --depth 1 --branch "$UPSTREAM_BRANCH" "$UPSTREAM" .cache/lambda-discipline
+
+      - name: Install Rust
+        # Installs the version the language repository's rust-toolchain.toml asks for.
+        working-directory: .cache/lambda-discipline
+        run: rustup toolchain install
+
+      - uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: .cache/lambda-discipline
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+          cache: pip
+          cache-dependency-path: requirements*.txt
+
+      - run: pip install -r requirements.txt
+
+      - name: Build the site
+        run: python build.py --no-update
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: site
+          path: _site
+          include-hidden-files: true
+
+      - name: Restore the link checker's cache
+        uses: actions/cache@v4
+        with:
+          path: .lycheecache
+          key: lychee-${{ github.sha }}
+          restore-keys: lychee-
+
+      - name: Check links
+        # Settings are in lychee.toml. --root-dir resolves links such as
+        # /reference/ against the built site instead of the live one.
+        uses: lycheeverse/lychee-action@v2
+        with:
+          lycheeVersion: v0.24.2
+          args: --root-dir "${{ github.workspace }}/_site" _site
+          fail: true
+          jobSummary: true
+        env:
+          # Authenticated requests avoid GitHub's rate limit for links to it.
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
