@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% block main %}
+<article class="prose wide">
+  <p class="crumbs"><a href="/examples/">Examples</a></p>
+  <h1>{{ example.title }}</h1>
+  <p class="meta">
+    <a href="{{ example.source_url }}"><code>{{ example.path }}</code></a>
+  </p>
+  <pre class="code" data-lang="lbd"><code>{{ example.source | lbd | safe }}</code></pre>
+  <h2 class="output-title">Output</h2>
+  {% if example.output %}
+  <pre class="output"><code>{{ example.output }}</code></pre>
+  {% else %}
+  <p class="muted">Nothing: this file only defines things for other programs to <code>use</code>.</p>
+  {% endif %}
+  <p class="run">Run it yourself from the repository root: <code>lbd run {{ example.path }}</code></p>
+</article>
+{% endblock %}

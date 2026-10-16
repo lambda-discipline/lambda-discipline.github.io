@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% if title and current != "/" %}{{ title }} · {% endif %}{{ site.title }}</title>
+  <meta name="description" content="{{ description or site.tagline }}">
+  <meta property="og:title" content="{{ title or site.title }}">
+  <meta property="og:description" content="{{ description or site.tagline }}">
+  <meta property="og:url" content="{{ site.url }}{{ current }}">
+  <link rel="canonical" href="{{ site.url }}{{ current }}">
+  <link rel="icon" href="/lambda.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+  <header class="top">
+    <a class="brand" href="/" aria-label="{{ site.title }} home">
+      <img src="/lambda.svg" alt="" width="28" height="28">
+      <span>{{ site.title }}</span>
+    </a>
+    <nav>
+      {% for label, path in site.nav %}
+      <a href="{{ path }}"{% if current.startswith(path) %} aria-current="page"{% endif %}>{{ label }}</a>
+      {% endfor %}
+      <a href="{{ upstream }}" class="gh">GitHub</a>
+    </nav>
+  </header>
+
+  <main class="{% block main_class %}page{% endblock %}">
+    {% block main %}{% endblock %}
+  </main>
+
+  <footer>
+    <p>
+      <span class="lambda">λ</span>
+      Lambda Discipline {{ version }}{% if commit %}, built from
+      <a href="{{ upstream }}/commit/{{ commit }}"><code>{{ commit[:7] }}</code></a>{% endif %}.
+      Released under the <a href="{{ upstream }}/blob/{{ site.upstream.branch }}/LICENSE.txt">MIT license</a>.
+    </p>
+  </footer>
+</body>
+</html>

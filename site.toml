@@ -1,0 +1,71 @@
+# Settings read by build.py.
+
+title = "Lambda Discipline"
+tagline = "A lazy, statically typed functional language built on the lambda calculus."
+url = "https://lambda-discipline.github.io"
+
+# Top navigation, in order. Each entry is [label, path].
+nav = [
+    ["Install", "/install/"],
+    ["Reference", "/reference/"],
+    ["Builtins", "/builtins/"],
+    ["Examples", "/examples/"],
+    ["Philosophy", "/philosophy/"],
+    ["Tooling", "/tooling/"],
+    ["About", "/about/"],
+]
+
+[upstream]
+repo = "https://github.com/lambda-discipline/lambda-discipline"
+branch = "master"
+
+# Examples come from the language repository. Every `.lbd` file under
+# `examples/` is included; these come first, in this order, and the rest
+# follow alphabetically. Paths are relative to the repository root.
+[examples]
+first = [
+    "examples/hello_world.lbd",
+    "examples/math_demos.lbd",
+    "examples/conditional_branching.lbd",
+    "examples/list.lbd",
+    "examples/shapes.lbd",
+    "examples/pair.lbd",
+    "examples/std.lbd",
+]
+
+# Programs from the golden test suite worth showing as examples too.
+extra = [
+    "tests/golden/programs/lazy_evaluation.lbd",
+    "tests/golden/programs/let_expressions.lbd",
+    "tests/golden/programs/mutual_recursion.lbd",
+    "tests/golden/programs/curried_functions.lbd",
+    "tests/golden/programs/complex_typing.lbd",
+    "tests/golden/programs/polymorphic_functions.lbd",
+    "tests/golden/programs/strings.lbd",
+    "tests/golden/programs/deep_recursion.lbd",
+]
+
+# Titles for files whose name doesn't read well on its own.
+[examples.titles]
+"examples/std.lbd" = "A standard library"
+"examples/pair.lbd" = "Church pairs"
+"examples/aoc-24/day-01/part_01.lbd" = "Advent of Code 2024, day 1, part 1"
+"examples/aoc-24/day-01/part_02.lbd" = "Advent of Code 2024, day 1, part 2"
+"tests/golden/programs/let_expressions.lbd" = "Let expressions"
+"tests/golden/programs/complex_typing.lbd" = "Annotated higher-order functions"
+
+# One-line descriptions for the example list. Files not listed here use the
+# first sentence of the comment they start with.
+[examples.summaries]
+"examples/hello_world.lbd" = "The smallest program: print a line."
+"examples/math_demos.lbd" = "Fibonacci, factorial, gcd and primes, with recursion and local `let` loops."
+"examples/shapes.lbd" = "Constants and small functions with type annotations."
+"examples/pair.lbd" = "Pairs built from nothing but lambdas, from the standard library."
+"examples/aoc-24/day-01/part_01.lbd" = "Parse two columns of numbers, sort them and sum the distances."
+"examples/aoc-24/day-01/part_02.lbd" = "Count matches between two lists, using the standard library."
+"tests/golden/programs/mutual_recursion.lbd" = "Two definitions that call each other, inferred together."
+"tests/golden/programs/curried_functions.lbd" = "Every function takes one argument, so partial application is free."
+"tests/golden/programs/complex_typing.lbd" = "Higher-order functions whose annotations name type variables."
+"tests/golden/programs/polymorphic_functions.lbd" = "One `compose` used at several types."
+"tests/golden/programs/strings.lbd" = "Joining, splitting, parsing and escaping strings."
+"tests/golden/programs/deep_recursion.lbd" = "A hundred thousand nested calls, and a loop of a million in constant space."

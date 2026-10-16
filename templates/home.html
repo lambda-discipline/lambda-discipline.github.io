@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% block main_class %}home{% endblock %}
+{% block main %}
+<section class="hero">
+  <div class="hero-mark" aria-hidden="true">λ</div>
+  <h1>{{ site.title }}</h1>
+  <p class="tagline">{{ site.tagline }}</p>
+  <p class="actions">
+    <a class="button primary" href="/install/">Install</a>
+    <a class="button" href="/reference/">Read the reference</a>
+  </p>
+</section>
+<article class="prose">
+  {{ content | safe }}
+</article>
+{% endblock %}

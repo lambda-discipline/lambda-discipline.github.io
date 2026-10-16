@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% block main %}
+<article class="prose wide">
+  <h1>Examples</h1>
+  <p>
+    Programs from the <a href="{{ upstream }}">language repository</a>, each
+    shown with the output it prints. They are run by the current
+    <code>lbd</code> every time the site is built, so they always work.
+  </p>
+  <ul class="cards">
+    {% for example in examples %}
+    <li>
+      <a href="{{ example.url }}">
+        <strong>{{ example.title }}</strong>
+        {% if example.summary %}<span>{{ example.summary | inline_md | safe }}</span>{% endif %}
+        <code class="path">{{ example.path.rsplit("/", 1)[-1] }}</code>
+      </a>
+    </li>
+    {% endfor %}
+  </ul>
+</article>
+{% endblock %}

@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+{% block main %}
+<article class="prose wide">
+  <h1>Builtins</h1>
+  <p>
+    Every builtin is lowerCamelCase and takes the data it works on last, so
+    partial application reads well: <code>(map (add 1) xs)</code>,
+    <code>(filter (lt 0) xs)</code>, <code>(split "," line)</code>. Lowercase
+    names in a signature are type variables. The same reference is built into
+    the interpreter: run <code>lbd docs [name]</code>, or <code>:docs</code> in
+    the REPL.
+  </p>
+
+  <input class="filter" type="search" placeholder="Filter builtins" aria-label="Filter builtins" data-filter>
+
+  <nav class="modules" aria-label="Groups">
+    {% for module in modules %}<a href="#{{ module.name | lower }}">{{ module.title }}</a>{% endfor %}
+  </nav>
+
+  {% for module in modules %}
+  <section class="module" id="{{ module.name | lower }}" data-module>
+    <h2>{{ module.title }}</h2>
+    <dl class="builtins">
+      {% for b in module.builtins %}
+      <div class="builtin" id="{{ b.name }}" data-name="{{ b.name | lower }}">
+        <dt>
+          <a class="anchor" href="#{{ b.name }}">{{ b.name }}</a>
+          <code class="sig">{{ b.signature | lbd | safe }}</code>
+        </dt>
+        <dd>{{ b.doc | inline_md | safe }}</dd>
+      </div>
+      {% endfor %}
+    </dl>
+  </section>
+  {% endfor %}
+  <p class="empty" hidden data-empty>No builtin matches that name.</p>
+</article>
+
+<script>
+  // Hide builtins whose name doesn't contain the filter text.
+  const input = document.querySelector("[data-filter]");
+  input.addEventListener("input", () => {
+    const query = input.value.trim().toLowerCase();
+    let shown = 0;
+    for (const section of document.querySelectorAll("[data-module]")) {
+      let visible = 0;
+      for (const item of section.querySelectorAll("[data-name]")) {
+        const match = item.dataset.name.includes(query);
+        item.hidden = !match;
+        visible += match;
+      }
+      section.hidden = visible === 0;
+      shown += visible;
+    }
+    document.querySelector("[data-empty]").hidden = shown > 0;
+  });
+</script>
+{% endblock %}
