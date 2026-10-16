@@ -1,0 +1,91 @@
+name: Deploy
+
+# Rebuilds the site and publishes it to GitHub Pages. The daily run only
+# rebuilds when the language repository has a commit the live site wasn't
+# built from (the site's /build.json records it); pushes here and manual runs
+# always rebuild.
+on:
+  schedule:
+    - cron: "17 3 * * *"
+  push:
+    branches: [master]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+env:
+  UPSTREAM: https://github.com/lambda-discipline/lambda-discipline
+  UPSTREAM_BRANCH: master
+  SITE: https://lambda-discipline.github.io
+
+jobs:
+  check:
+    name: Check for changes
+    runs-on: ubuntu-latest
+    outputs:
+      build: ${{ steps.compare.outputs.build }}
+    steps:
+      - id: compare
+        run: |
+          upstream=$(git ls-remote "$UPSTREAM" "refs/heads/$UPSTREAM_BRANCH" | cut -f1)
+          deployed=$(curl -fsSL "$SITE/build.json" | jq -r '.commit // empty' || true)
+          echo "upstream: $upstream"
+          echo "deployed: ${deployed:-none}"
+          if [ "$GITHUB_EVENT_NAME" != "schedule" ] || [ "$upstream" != "$deployed" ]; then
+            echo "build=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "build=false" >> "$GITHUB_OUTPUT"
+            echo "The site is already up to date." >> "$GITHUB_STEP_SUMMARY"
+          fi
+
+  build:
+    name: Build
+    needs: check
+    if: needs.check.outputs.build == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Clone the language repository
+        run: git clone --depth 1 --branch "$UPSTREAM_BRANCH" "$UPSTREAM" .cache/lambda-discipline
+
+      - name: Install Rust
+        # Installs the version the language repository's rust-toolchain.toml asks for.
+        working-directory: .cache/lambda-discipline
+        run: rustup toolchain install
+
+      - uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: .cache/lambda-discipline
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+          cache: pip
+
+      - run: pip install -r requirements.txt
+
+      - name: Build the site
+        run: python build.py --no-update
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: _site
+
+  deploy:
+    name: Deploy
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4
