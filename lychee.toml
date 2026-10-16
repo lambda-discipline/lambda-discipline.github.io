@@ -13,13 +13,25 @@ cache = true
 max_cache_age = "1d"
 
 max_retries = 3
+retry_wait_time = 5
 timeout = 20
 
 # 429 means rate limited, not broken.
 accept = ["200..=299", "429"]
+
+# Check source files on raw.githubusercontent.com, a CDN, instead of their
+# github.com pages: github.com rate-limits a burst of page requests with 503.
+remap = [
+    '^https://github\.com/([^/]+/[^/]+)/blob/(.+)$ https://raw.githubusercontent.com/$1/$2',
+]
 
 exclude = [
     # The site's own absolute URLs (canonical links, the sitemap) point at the
     # deployed copy; the same pages are checked as local files instead.
     '^https://lambda-discipline\.github\.io',
 ]
+
+# Pace the remaining github.com requests (repository and organization pages).
+[hosts."github.com"]
+concurrency = 2
+request_interval = "500ms"
