@@ -1,0 +1,41 @@
+name: Problem on the site
+description: A broken page or link, a mistake in the docs, or something that looks wrong.
+labels: [bug]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for reporting! Problems with the language or `lbd` itself belong in the
+        [language repository](https://github.com/lambda-discipline/lambda-discipline/issues).
+  - type: input
+    id: url
+    attributes:
+      label: Page
+      placeholder: https://lambda-discipline.github.io/reference/#types
+    validations:
+      required: true
+  - type: dropdown
+    id: kind
+    attributes:
+      label: Kind of problem
+      options:
+        - Broken link
+        - Wrong or unclear documentation
+        - Code sample doesn't work
+        - Layout or display
+        - Other
+    validations:
+      required: true
+  - type: textarea
+    id: problem
+    attributes:
+      label: What's wrong
+      description: What you saw, and what you expected instead.
+    validations:
+      required: true
+  - type: input
+    id: browser
+    attributes:
+      label: Browser and device
+      description: Only needed for layout problems.
+      placeholder: Firefox 140 on Android

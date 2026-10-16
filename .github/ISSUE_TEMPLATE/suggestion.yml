@@ -1,0 +1,16 @@
+name: Suggestion
+description: A new page, example, explanation or design improvement.
+labels: [enhancement]
+body:
+  - type: textarea
+    id: idea
+    attributes:
+      label: Idea
+      description: What should the site have, and who would it help?
+    validations:
+      required: true
+  - type: textarea
+    id: details
+    attributes:
+      label: Details
+      description: Draft text, an example program, a sketch, or sites that do it well.

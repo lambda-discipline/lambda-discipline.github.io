@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Problem with the language or lbd
+    url: https://github.com/lambda-discipline/lambda-discipline/issues/new/choose
+    about: Bugs and proposals for the language itself belong in the language repository.
+  - name: Report a security vulnerability
+    url: https://github.com/lambda-discipline/lambda-discipline.github.io/security/advisories/new
+    about: Please report vulnerabilities privately, not as public issues.
