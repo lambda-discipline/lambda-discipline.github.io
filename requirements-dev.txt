@@ -1,8 +1,8 @@
 # Tools for checking the build scripts; CI runs the same versions.
 -r requirements.txt
 black==26.10.1
-mypy==2.4.0
+mypy==2.4.1
 pre-commit==4.7.0
-ruff==0.17.1
-types-Markdown==3.10.2.20261007
+ruff==0.17.3
+types-Markdown==3.11.2.20261029
 types-Pygments==2.21.0.20260819
